@@ -1,0 +1,35 @@
+# Same layout and preprocessing as encoder_glint_ct (GLINT-CT is initialized from this checkpoint).
+
+model:
+  model_config:
+    pretrained_dir: ${oc.env:PRETRAINED_DIR,./pretrained}
+    vision_config:
+      model_type: vjepa2.1
+      pretrained_checkpoint: vjepa2_1/vjepa2_1_vitl_dist_vitG_384.pt
+      arch: "vjepa2_1_vit_large_384"
+      img_size: 384
+      num_frames: 80
+      input_modality: 3
+      input_slices: 240
+      patch_size: 16
+      tubelet_size: 2
+      in_chans: 3
+      use_activation_checkpointing: False
+
+    decoder_config:
+      model_type: unetr_noskip
+      patch_size_3d: [2, 16, 16]  # patch upsample; D mismatch handled by post-decoder trilinear interp
+      embed_dim: 1024
+      base_channels: 32
+
+    input_channels: 1
+    input_shape: [240, 384, 384]
+
+dataset:
+  spacing: [1.5, 0.75, 0.75]
+  orientation: IPL
+  patch_size: [240, 384, 384]
+  a_min: -1000.0
+  a_max: 1000.0
+  b_min: -1.0
+  b_max: 1.0

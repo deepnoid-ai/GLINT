@@ -1,0 +1,24 @@
+# Must match encoder_colipri; also read by build_cache.py. Paths are relative to dataset.data_root.
+
+dataset:
+  preprocessing:
+    orientation: RAS
+    spacing: [2.0, 2.0, 2.0]
+    a_min: -1000.0
+    a_max: 1000.0
+    b_min: -1.0
+    b_max: 1.0
+    cache_root: monai_cache/ct_seg
+
+  # MSD Task06 raw layout; split_json from preprocessing/generate_holdout_splits.py
+  Dataset006_Lung:
+    raw_dir: msd_lung/Dataset006_Lung
+    split_json: msd_lung/Dataset006_Lung/splits_holdout712.json
+    num_classes: 2
+    labels: {background: 0, cancer: 1}
+
+  # build with preprocessing/convert_radiomics.py (then --build_2class_only) + build_radiomics_datalist.py
+  Dataset950_NSCLC_Radiomics:
+    datalist_json: nsclc_radiomics/nsclc_radiomics_datalist_splits.json
+    num_classes: 3
+    labels: {background: 0, primary: 1, meta: 2}

@@ -1,0 +1,51 @@
+# Frozen-encoder sweep over CT-RATE / LIDC-IDRI / RSNA-PE in one run; run name = {--name}_{entry.name}.
+
+model:
+  module_to_update: [pooling_layer, classifier]
+
+# Manifest / raw paths are relative to dataset.data_root.
+datasets_matrix:
+  - name: ct_rate
+    num_classes: 18
+    dataset_key: CT_RATE
+    dataset_entry:
+      train: ct_rate/train.json
+      eval:  ct_rate/val.json
+      test:  ct_rate/test.json
+      raw_root: CT-RATE/dataset
+    train_overrides:
+      per_device_train_batch_size: 16
+      per_device_eval_batch_size: 16
+      num_train_epochs: 5
+    experiment_overrides:
+      early_stopping_patience: 3
+
+  - name: lidc
+    num_classes: 1
+    dataset_key: LIDC
+    dataset_entry:
+      metadata_csv: lidc_idri/raw/metadata.csv
+      train: lidc_idri/train.json
+      eval:  lidc_idri/eval.json
+      test:  lidc_idri/test.json
+    train_overrides:
+      per_device_train_batch_size: 4
+      per_device_eval_batch_size: 4
+      num_train_epochs: 20
+    experiment_overrides:
+      early_stopping_patience: 10
+
+  - name: rsna_pe
+    num_classes: 1
+    dataset_key: RSNA_PE
+    dataset_entry:
+      train: rsna_pe/train.json
+      eval:  rsna_pe/eval.json
+      test:  rsna_pe/test.json
+      raw_root: rsna_pe/train
+    train_overrides:
+      per_device_train_batch_size: 4
+      per_device_eval_batch_size: 4
+      num_train_epochs: 20
+    experiment_overrides:
+      early_stopping_patience: 10

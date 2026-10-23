@@ -1,0 +1,27 @@
+llm_config:
+  model_config:
+    model: "openai/gpt-oss-120b"
+    tensor_parallel_size: 4
+    dtype: "torch.bfloat16"
+    gpu_memory_utilization: 0.9
+    enforce_eager: False
+
+  sampling_params:
+    temperature: 0.0
+    top_p: 1.0
+    top_k: -1
+    max_tokens: 16384
+    json_object: False
+
+  batch_size: 1000
+  max_count: 500
+
+
+dataset:
+  data_root: ${oc.env:DATA_ROOT,null}
+
+pipeline:
+  step_configs:
+    report_decomposition:
+      input_key: "raw_report"
+      output_key: "report_decomposition"

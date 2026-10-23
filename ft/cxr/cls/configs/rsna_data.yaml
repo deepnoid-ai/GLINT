@@ -1,0 +1,22 @@
+train:
+  metric_for_best_model: "eval_cls_metrics/AUC"
+
+
+dataset:
+  dataset_type: cxr
+
+  train: [RSNA]
+  eval: [RSNA]
+  test: [RSNA]
+
+  RSNA:
+    train: rsna_pneumonia/train.json
+    eval: rsna_pneumonia/val.json
+    test: rsna_pneumonia/test.json
+    image_root: rsna_pneumonia/images
+
+
+model:
+  model_config:
+    classifier_config:
+      num_classes: 1

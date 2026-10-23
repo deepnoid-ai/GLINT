@@ -1,0 +1,27 @@
+# environments
+.venv/
+.env
+
+# caches
+__pycache__/
+*.py[cod]
+.ruff_cache/
+
+# experiment outputs and local data / weight / cache directories
+outputs/
+wandb/
+data/
+pretrained/
+dfr_cache/
+monai_cache/
+
+# weights / large artifacts
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+
+# editors / OS
+.idea/
+.vscode/
+.DS_Store

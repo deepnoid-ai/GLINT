@@ -1,0 +1,13 @@
+model:
+  model_config:
+    vision_config:
+      model_type: dinov3_vit
+      pretrained_name_or_path: facebook/dinov3-vitl16-pretrain-lvd1689m
+      img_size: 1024
+      use_cls_token: False
+      patch_token_start_index: 5  # strip 1 CLS + 4 register tokens
+    projection_config:
+      vision_hidden_dim: 1024
+      projection_hidden_dim: 1024
+    decoder_config:
+      in_channels: 1024

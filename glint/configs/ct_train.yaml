@@ -1,0 +1,12 @@
+experiment:
+  project: glint_ct
+  early_stopping_patience: 3
+
+train:
+  learning_rate: 5.0e-05
+  per_device_train_batch_size: 4
+  per_device_eval_batch_size: 4
+  gradient_accumulation_steps: 1
+  dataloader_num_workers: 1
+  num_train_epochs: 5
+  dataloader_drop_last: True

@@ -1,0 +1,32 @@
+model:
+  model_class_name: ClassificationFineTuningModel
+  config_class_name: FineTuningConfig
+
+  model_config:
+    vision_config:
+      model_type: vjepa2
+      pretrained_name_or_path: ""
+    pooling_config:
+      model_type: attentive_pooling
+      num_pooling_heads: 8
+    classifier_config:
+      model_type: linear
+      input_dim: 768
+      num_classes: 18 # CT-RATE
+    loss_config:
+      model_type: bce
+
+  module_to_update: [vision_model, attentive_pooling, classifier]
+
+  pretrained_ckpt: null
+  adapter_ckpt: null
+
+  lora_config:
+    use_lora: False
+    target_modules: 'vision_model.*\.(query|value)'
+    inference_mode: False
+    lora_r: 8
+    lora_alpha: 32
+    lora_dropout: 0.05
+
+  dtype: torch.float32

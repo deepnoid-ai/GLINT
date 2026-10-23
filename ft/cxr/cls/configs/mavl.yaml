@@ -1,0 +1,9 @@
+model:
+  model_config:
+    pretrained_dir: ${oc.env:PRETRAINED_DIR,./pretrained}
+    vision_config:
+      model_type: mavl
+      pretrained_name_or_path: MAVL/checkpoint_full_40.pth
+      hidden_size: 256
+    pooling_config:
+      start_token_index: 0

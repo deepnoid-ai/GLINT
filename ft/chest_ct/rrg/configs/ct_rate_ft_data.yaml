@@ -1,0 +1,12 @@
+dataset:
+  dataset_type: chest_ct
+
+  train: [CT_RATE]
+  eval: [CT_RATE]
+  test: [CT_RATE]
+
+  CT_RATE:
+    train: ct_rate/train.json
+    eval: ct_rate/val.json
+    test: ct_rate/test.json
+    raw_root: CT-RATE/dataset

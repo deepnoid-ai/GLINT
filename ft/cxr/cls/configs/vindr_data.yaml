@@ -1,0 +1,21 @@
+train:
+  metric_for_best_model: "eval_cls_metrics/Macro AUC"
+
+dataset:
+  dataset_type: cxr
+
+  train: [VinDr]
+  eval: [VinDr]
+  test: [VinDr]
+
+  VinDr:
+    train: vindr_cxr/train.json
+    eval: vindr_cxr/val.json
+    test: vindr_cxr/test.json
+    image_root: vindr_cxr/images
+
+
+model:
+  model_config:
+    classifier_config:
+      num_classes: 27

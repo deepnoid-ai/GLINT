@@ -1,0 +1,14 @@
+train:
+  per_device_train_batch_size: 32
+  per_device_eval_batch_size: 32
+  gradient_accumulation_steps: 1
+
+model:
+  model_config:
+    vision_config:
+      model_type: glint
+      pretrained_name_or_path: Deepnoid/GLINT-CXR
+      img_size: 1024
+      use_cls_token: False
+    report_generator_config:
+      d_vf: 1024

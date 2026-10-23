@@ -1,0 +1,12 @@
+model:
+  model_config:
+    vision_config:
+      model_type: dinov3_vit
+      pretrained_name_or_path: facebook/dinov3-vitl16-pretrain-lvd1689m
+      img_size: 1024
+      use_cls_token: False
+    pooling_config:
+      model_type: attentive_pooling
+      start_token_index: 5
+
+  module_to_update: [pooling_layer, classifier]

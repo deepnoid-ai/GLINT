@@ -1,0 +1,80 @@
+train:
+  learning_rate: 1e-4
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 1   # keep at 1: small datasets (MSD-Lung) otherwise get too few optimizer steps per epoch
+  gradient_checkpointing: False
+  ddp_find_unused_parameters: True
+  gradient_checkpointing_kwargs: { "use_reentrant": False }
+  dataloader_num_workers: 4
+  num_train_epochs: 300
+  weight_decay: 1e-5
+  max_grad_norm: 1.0
+  eval_strategy: epoch
+  eval_steps: 1
+  save_strategy: epoch
+  save_total_limit: 3
+  metric_for_best_model: eval_loss
+  greater_is_better: False
+  load_best_model_at_end: True
+  lr_scheduler_type: cosine
+  warmup_ratio: 0.05
+  logging_steps: 10
+  label_names: ["masks"]
+  report_to: none
+  remove_unused_columns: False
+  seed: 42
+  data_seed: 42
+  full_determinism: False
+  ddp_timeout: 36000
+  disable_tqdm: False
+  bf16: False
+
+experiment:
+  project: glint_ct_seg_ft
+  name: dev
+  user: debug
+  output_root_dir: ${oc.env:OUTPUT_ROOT,outputs}
+  early_stopping_patience: 20
+  resume_from_checkpoint: False
+  tags: []
+  wandb_run_id: null
+
+model:
+  model_class_name: CTSegmentationFineTuningModel
+  config_class_name: FineTuningConfig
+
+  model_config:
+    vision_config:
+      model_type: null
+      pretrained_name_or_path: null
+
+    decoder_config:
+      model_type: unetr_noskip
+      patch_size_3d: [2, 16, 16]
+      embed_dim: 1024
+      num_classes: 3
+      base_channels: 32
+
+    input_channels: 1
+    input_shape: [96, 96, 96]
+
+    loss:
+      apply: [DiceLoss, CrossEntropyLoss]
+      ratio: [1.0, 1.0]
+      DiceLoss:
+        softmax: True
+        to_onehot_y: True
+        include_background: False  # foreground-only Dice; background dominates (>99% voxels)
+
+  module_to_update: [vision_model, segmentation_decoder, channel_adapter]
+
+  pretrained_ckpt: null
+  adapter_ckpt: null
+  dtype: torch.float32
+
+dataset:
+  data_root: ${oc.env:DATA_ROOT,null}
+  fold: 0  # only used by 5-fold split JSONs
+  patch_size: [96, 96, 96]
+  num_samples: 2

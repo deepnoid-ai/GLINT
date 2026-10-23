@@ -1,0 +1,12 @@
+model:
+  model_config:
+    vision_config:
+      model_type: glint
+      pretrained_name_or_path: Deepnoid/GLINT-CXR
+      img_size: 1024
+      use_cls_token: False
+    pooling_config:
+      model_type: attentive_pooling
+      start_token_index: 5
+
+  module_to_update: [pooling_layer, classifier]

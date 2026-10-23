@@ -1,0 +1,49 @@
+cff-version: 1.2.0
+message: "If you use GLINT, please cite the paper below."
+title: "GLINT: Sparsely Gated Vision-Language Alignment for Fine-Grained Radiology Representations"
+authors:
+  - family-names: Park
+    given-names: Jonggwon
+  - family-names: Lee
+    given-names: Seongeun
+  - family-names: Park
+    given-names: Junhyun
+  - family-names: Yun
+    given-names: Hannah
+  - family-names: Kim
+    given-names: Hyunwoong
+  - family-names: Jeong
+    given-names: Sohyun
+  - family-names: Kang
+    given-names: Hyewon
+  - family-names: Yoon
+    given-names: Byungmu
+  - family-names: Choi
+    given-names: Kyoyun
+repository-code: "https://github.com/deepnoid-ai/GLINT"
+license: CC-BY-NC-4.0
+preferred-citation:
+  type: conference-paper
+  title: "GLINT: Sparsely Gated Vision-Language Alignment for Fine-Grained Radiology Representations"
+  authors:
+    - family-names: Park
+      given-names: Jonggwon
+    - family-names: Lee
+      given-names: Seongeun
+    - family-names: Park
+      given-names: Junhyun
+    - family-names: Yun
+      given-names: Hannah
+    - family-names: Kim
+      given-names: Hyunwoong
+    - family-names: Jeong
+      given-names: Sohyun
+    - family-names: Kang
+      given-names: Hyewon
+    - family-names: Yoon
+      given-names: Byungmu
+    - family-names: Choi
+      given-names: Kyoyun
+  year: 2026
+  collection-title: "The Fortieth Annual Conference on Neural Information Processing Systems"
+  url: "https://arxiv.org/abs/2606.03180"

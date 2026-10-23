@@ -1,0 +1,8 @@
+dataset:
+  dfr_cache_dir: ${oc.env:DFR_CACHE_DIR,./dfr_cache}/cxr_dinov3_7B
+  dfr_cache_layers: [36]
+
+model:
+  model_config:
+    dfr_config:
+      use_cache: True

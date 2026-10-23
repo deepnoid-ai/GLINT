@@ -1,0 +1,34 @@
+model:
+  model_class_name: ClassificationFineTuningModel
+  config_class_name: FineTuningConfig
+
+  model_config:
+    vision_config:
+      model_type: dinov2
+      pretrained_name_or_path: "facebook/dinov2-base"
+    pooling_config:
+      model_type: attentive_pooling
+      num_pooling_heads: 8
+      start_token_index: 1
+    classifier_config:
+      model_type: linear
+      input_dim: 768
+      num_classes: 1
+    loss_config:
+      model_type: bce
+
+
+  module_to_update: [pooling_layer, classifier]
+
+  pretrained_ckpt: null
+  adapter_ckpt: null
+
+  lora_config:
+    use_lora: False
+    target_modules: 'vision_model.*\.(query|value)'
+    inference_mode: False
+    lora_r: 8
+    lora_alpha: 32
+    lora_dropout: 0.05
+
+  dtype: torch.float32

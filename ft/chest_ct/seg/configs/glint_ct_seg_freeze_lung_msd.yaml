@@ -1,0 +1,33 @@
+model:
+  model_config:
+    vision_config:
+      use_activation_checkpointing: True
+    decoder_config:
+      num_classes: 0
+  module_to_update: [segmentation_decoder, channel_adapter]
+
+# Effective batch per optimizer step = 1 × NGPUs × 2 num_samples × 1 accum.
+train:
+  per_device_train_batch_size: 1
+  learning_rate: 5e-4
+  num_train_epochs: 100
+
+dataset:
+  cache_root: monai_cache/ct_seg
+  # No RandFlip / RandShiftIntensity; SpatialPadd + RandCrop still run (fixed-shape patching).
+  augment: False
+
+experiment:
+  early_stopping_patience: 20
+
+datasets_matrix:
+  - name: lung
+    num_classes: 2
+    dataset_entry:
+      name: Dataset006_Lung
+      raw_dir: msd_lung/Dataset006_Lung
+      split_json: msd_lung/Dataset006_Lung/splits_holdout712.json
+    # Lung window so parenchyma is visible in panels
+    viz_overrides:
+      window_center: -500
+      window_width: 1400

@@ -1,0 +1,28 @@
+# COLIPRI (Primus-M) pretraining geometry: RAS, 2 mm isotropic, 160^3 input, 8^3 patches.
+
+model:
+  model_config:
+    pretrained_dir: ${oc.env:PRETRAINED_DIR,./pretrained}
+    vision_config:
+      model_type: colipri
+      pretrained_name_or_path: colipri  # directory with the HF microsoft/colipri model.safetensors
+      embed_dim: 864
+      img_size: [160, 160, 160]
+
+    decoder_config:
+      model_type: unetr_noskip
+      patch_size_3d: [8, 8, 8]
+      embed_dim: 864
+      base_channels: 32
+
+    input_channels: 1
+    input_shape: [160, 160, 160]
+
+dataset:
+  spacing: [2.0, 2.0, 2.0]
+  orientation: RAS
+  patch_size: [160, 160, 160]
+  a_min: -1000.0
+  a_max: 1000.0
+  b_min: -1.0
+  b_max: 1.0

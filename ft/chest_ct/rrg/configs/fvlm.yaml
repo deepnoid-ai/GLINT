@@ -1,0 +1,24 @@
+train:
+  per_device_train_batch_size: 16
+  per_device_eval_batch_size: 16
+  gradient_accumulation_steps: 1
+  label_names: ["reports"]
+
+model:
+  model_config:
+    pretrained_dir: ${oc.env:PRETRAINED_DIR,./pretrained}
+    vision_config:
+      model_type: fvlm
+      pretrained_name_or_path: fVLM/model.pth
+      hidden_size: 768
+
+    report_generator_config:
+      d_vf: 768
+
+# fVLM preprocessing (see ft/README.md), center-cropped to the encoder input (D, H, W)
+dataset:
+  rgb_norm: False
+  center_crop_size: [112, 256, 352]
+  processed_volumes:
+    extension: .nii.gz
+    CT_RATE: fvlm_volumes/ct_rate

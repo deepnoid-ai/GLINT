@@ -1,0 +1,31 @@
+model:
+  model_config:
+    vision_config:
+      use_activation_checkpointing: True
+    decoder_config:
+      num_classes: 0
+  module_to_update: [segmentation_decoder, channel_adapter]
+
+# Effective batch per optimizer step = 1 × NGPUs × 2 num_samples × 1 accum.
+train:
+  per_device_train_batch_size: 1
+  learning_rate: 5e-4
+  num_train_epochs: 100
+
+dataset:
+  cache_root: monai_cache/ct_seg
+  augment: False
+
+experiment:
+  early_stopping_patience: 20
+
+datasets_matrix:
+  - name: nsclc
+    num_classes: 3
+    dataset_entry:
+      name: Dataset950_NSCLC_Radiomics
+      datalist_json: nsclc_radiomics/nsclc_radiomics_datalist_splits.json
+    # Lung window so parenchyma is visible in panels
+    viz_overrides:
+      window_center: -500
+      window_width: 1400

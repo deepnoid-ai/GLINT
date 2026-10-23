@@ -1,0 +1,81 @@
+model:
+  model_class_name: GLINTModel
+  config_class_name: GLINTConfig
+
+  model_config:
+    pretrained_dir: ${oc.env:PRETRAINED_DIR,./pretrained}
+
+    vision_config:
+      input_modality: 3
+      input_slices: 240
+      num_channels: 3
+      model_type: "vjepa2.1"
+      arch: "vjepa2_1_vit_large_384"
+      img_size: 384
+      num_frames: 80
+      use_hierarchical: False
+      pretrained_checkpoint: vjepa2_1/vjepa2_1_vitl_dist_vitG_384.pt
+
+    text_config:
+      model_type: mpnet
+      pretrained_name_or_path: "sentence-transformers/all-mpnet-base-v2"
+      use_cls_token: False
+
+    align_layer_config:
+      model_type: linear
+      input_dim: 1024
+      hidden_size: 768
+
+    can_return_loss: True
+    use_vision_layer_norm: True
+    use_text_layer_norm: True
+    compute_logits_type: vl_alignment
+
+    loss:
+      apply: [AlignmentLoss, DFRLoss]
+      ratio: [1.0, 8.0]
+      AlignmentLoss:
+        loss_type: mpnce
+        loss_kwargs:
+          temperature: 0.07
+        local_loss: True
+        vl_logit_type: gate_confidence_shift
+        vl_logit_kwargs:
+          embed_dim: 768
+          gate_hidden_dim: 768
+          sem_hidden_dim: 768
+          gate_proj_mode: mlp
+          sem_proj_mode: identity
+          gate_log_temperature: 2.302585
+      DFRLoss:
+        use_token_wise: True
+
+    dfr_config:
+      use_cache: False
+
+      vfm_teacher_config:
+        model_type: vjepa2.1
+        arch: vjepa2_1_vit_gigantic_384
+        img_size: 384
+        num_frames: 80
+        use_hierarchical: False
+        pretrained_checkpoint: vjepa2_1/vjepa2_1_vitG_384.pt
+
+      projector_config:
+        model_type: mlp
+        input_dim: 1024
+        hidden_dim: 2048
+        out_dim: 1664
+        num_layers: 3
+        activation: silu
+        dropout: 0.0
+
+      layer_mapping:
+        student_layers: [22]
+        teacher_layers: [44]
+        use_multiple_projectors: True
+
+  module_to_update: [vision_model, align_layer, text_model, loss_fns, dfr_module.projector]
+
+  pretrained_ckpt: null
+  dtype: torch.float32

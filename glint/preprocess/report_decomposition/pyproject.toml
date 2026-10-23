@@ -1,0 +1,14 @@
+[project]
+name = "glint-report-decomposition"
+version = "0.1.0"
+description = "Report decomposition for GLINT pretraining manifests (gpt-oss-120b via vLLM)"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "omegaconf>=2.3.0",
+    "peft==0.18.0",
+    "setuptools==78.1.1",
+    "vllm>=0.15.1",
+    "wandb>=0.24.2",
+    "wheel==0.45.1",
+]

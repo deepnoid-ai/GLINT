@@ -1,0 +1,26 @@
+# Same frozen-probe optimization as glint_ct; batch size / epochs per dataset come from glint_ct_ft_cls_all.
+train:
+  per_device_train_batch_size: 32
+  per_device_eval_batch_size: 32
+  ddp_find_unused_parameters: False
+  save_steps: 1
+  warmup_steps: 200
+
+model:
+  model_config:
+    pretrained_dir: ${oc.env:PRETRAINED_DIR,./pretrained}
+    vision_config:
+      model_type: visd_boost
+      # loaded in this order, as in the official eval.py
+      pretrained_name_or_path: [ViSD-Boost/checkpoint_vqvae.pth, ViSD-Boost/checkpoint.pth]
+      hidden_size: 256
+
+# same fVLM-preprocessed volumes as fvlm.yaml
+dataset:
+  rgb_norm: False
+  center_crop_size: [112, 256, 352]
+  processed_volumes:
+    extension: .nii.gz
+    CT_RATE: fvlm_volumes/ct_rate
+    LIDC: fvlm_volumes/lidc_idri
+    RSNA_PE: fvlm_volumes/rsna_pe

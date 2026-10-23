@@ -1,0 +1,11 @@
+dataset:
+  dataset_type: "ct"
+  original_dir: "ct_rate/reports"
+  save_dir: "ct_rate"
+  splits: ["train", "val", "test"]
+  remove_original_keys: []
+
+  input_config:
+    target_keys: ["Findings_EN", "Impressions_EN"]
+    combination: "concat"
+    separator: " "

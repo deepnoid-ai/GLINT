@@ -1,0 +1,11 @@
+dataset:
+  dataset_type: "cxr"
+  original_dir: "mimic_cxr/reports"
+  save_dir: "mimic_cxr"
+  splits: ["train", "validate", "test"]
+  remove_original_keys: []
+
+  input_config:
+    target_keys: ["findings", "impression"]
+    combination: "concat"
+    separator: " "

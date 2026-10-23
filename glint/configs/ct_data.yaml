@@ -1,0 +1,24 @@
+dataset:
+  dataset_type: chest_ct
+
+  use_monai: True
+  monai_config:
+    orientation: "IPL"
+    target_spacing: [1.5, 0.75, 0.75]
+    roi_size: [240, 480, 480]
+    final_size: [240, 384, 384]
+    hu_range: [-1000.0, 1000.0]
+    normalize_range: [-1.0, 1.0]
+    cache_root: "monai_cache/ct_res384_IPL"
+
+  train: [CT_RATE]
+  eval: [CT_RATE]
+  test: [CT_RATE]
+
+  CT_RATE:
+    train: ct_rate/train.json
+    eval: ct_rate/val.json
+    test: ct_rate/test.json
+
+  dfr_cache_dir: null
+  dfr_cache_layers: null

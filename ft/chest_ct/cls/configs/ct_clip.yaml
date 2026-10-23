@@ -1,0 +1,24 @@
+# Same frozen-probe optimization as glint_ct; batch size / epochs per dataset come from glint_ct_ft_cls_all.
+train:
+  per_device_train_batch_size: 32
+  per_device_eval_batch_size: 32
+  ddp_find_unused_parameters: False
+  save_steps: 1
+  warmup_steps: 200
+
+model:
+  model_config:
+    pretrained_dir: ${oc.env:PRETRAINED_DIR,./pretrained}
+    vision_config:
+      model_type: ct_clip
+      pretrained_name_or_path: CT-CLIP/CT-CLIP_v2.pt
+      hidden_size: 512
+
+# CT-CLIP preprocessing (see ft/README.md): (240, 480, 480) volumes at 1.5 x 0.75 x 0.75 mm, HU / 1000
+dataset:
+  rgb_norm: False
+  processed_volumes:
+    extension: .npy
+    CT_RATE: ct_clip_volumes/ct_rate
+    LIDC: ct_clip_volumes/lidc_idri
+    RSNA_PE: ct_clip_volumes/rsna_pe

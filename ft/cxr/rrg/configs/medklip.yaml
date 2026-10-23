@@ -1,0 +1,13 @@
+train:
+  per_device_train_batch_size: 16
+  per_device_eval_batch_size: 16
+  gradient_accumulation_steps: 1
+
+model:
+  model_config:
+    pretrained_dir: ${oc.env:PRETRAINED_DIR,./pretrained}
+    vision_config:
+      model_type: medklip
+      pretrained_name_or_path: MedKLIP/checkpoint_final.pth
+    report_generator_config:
+      d_vf: 256

@@ -1,0 +1,14 @@
+dataset:
+  dataset_type: cxr
+
+  train: [MIMIC_CXR]
+  eval: [MIMIC_CXR]
+  test: [MIMIC_CXR]
+
+  MIMIC_CXR:
+    train: mimic_cxr/train.json
+    eval: mimic_cxr/validate.json
+    test: mimic_cxr/test.json
+
+  dfr_cache_dir: null
+  dfr_cache_layers: null

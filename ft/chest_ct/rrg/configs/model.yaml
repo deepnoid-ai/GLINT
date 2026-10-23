@@ -1,0 +1,52 @@
+model:
+  model_class_name: ReportGenerationFineTuningModel
+  config_class_name: FineTuningConfig
+
+  model_config:
+    vision_config:
+      model_type: vjepa2
+      pretrained_name_or_path: "facebook/vjepa2-vitl-fpc64-256"
+    pooling_config:
+      model_type: mean_pooling
+    report_generator_config:
+      d_model: 512
+      d_ff: 512
+      d_vf: 1024 # overridden by each encoder config
+      num_heads: 8
+      num_layers: 3
+      dropout: 0.1
+      vocab_size: 12731 # placeholder; set from the training vocabulary by run.py
+      bos_idx: 0
+      eos_idx: 0
+      pad_idx: 0
+      use_bn: 0
+      drop_prob_lm: 0.5
+      max_seq_length: 512
+      rm_num_slots: 3
+      rm_num_heads: 8
+      rm_d_model: 512
+      sample_method: beam_search
+      beam_size: 1
+      temperature: 1.0
+      sample_n: 1
+      group_size: 1
+      output_logsoftmax: 1
+      decoding_constraint: 0
+      block_trigrams: 1
+    loss_config:
+      model_type: R2GenLMLoss
+
+  module_to_update: [encoder_decoder, logit]
+
+  pretrained_ckpt: null
+  adapter_ckpt: null
+
+  lora_config:
+    use_lora: False
+    target_modules: 'vision_model.*\.(query|value)'
+    inference_mode: False
+    lora_r: 8
+    lora_alpha: 32
+    lora_dropout: 0.05
+
+  dtype: torch.float32

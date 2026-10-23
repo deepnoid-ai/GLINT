@@ -1,0 +1,47 @@
+# Zero-shot CXR evaluation; paths are relative to DATA_ROOT.
+
+inference:
+  batch_size: 16
+  num_workers: 16
+
+  cls_dataset: [OpenI, PadChest, ChestXray14, Chexpert, ChestXDet10]
+  det_dataset: [ChestXDet10, MS-CXR]
+  seg_dataset: [SIIM, ChestXDet]
+
+  compute_pixel_level_auroc: false
+  threshold_step: 0.01
+
+  visualization:
+    datasets: [ChestXDet, MS-CXR]
+    max_samples_per_finding: 50
+
+  # RadZero evaluation sets (https://huggingface.co/Deepnoid/RadZero/tree/main/data): place each data/<Dataset>/ folder
+  # under DATA_ROOT next to that dataset's images; image paths inside the manifests are relative to DATA_ROOT.
+  dataset_paths:
+    OpenI:
+      image_path: OpenI/openi_multi_label_image.csv
+      text_path: OpenI/openi_multi_label_text.json
+      label_path: OpenI/custom.csv
+    PadChest:
+      image_path: PadChest/padchest_multi_label_image.csv
+      text_path: PadChest/padchest_multi_label_text.json
+      label_path: PadChest/manual_image.json
+    ChestXray14:
+      image_path: ChestXray14/chestxray14_test_image.csv
+      text_path: ChestXray14/chestxray14_test_text.json
+      label_path: ChestXray14/test_list.txt
+    Chexpert:
+      image_path: Chexpert/chexpert5_test_image.csv
+      text_path: Chexpert/chexpert5_test_text.json
+      label_path: Chexpert/test_labels.csv
+    ChestXDet10:
+      image_path: ChestXDet10/chestXDet10_test_image.csv
+      text_path: ChestXDet10/chestXDet10_test_text.json
+      label_path: ChestXDet10/test.json
+    MS-CXR:
+      data_path: MS-CXR/test.json
+    SIIM:
+      data_path: SIIM/test.csv
+    # official ChestX-Det release (ChestX_Det_{train,test}.json + images)
+    ChestXDet:
+      data_path: chestx_det/raw

@@ -1,0 +1,20 @@
+train:
+  metric_for_best_model: "eval_cls_metrics/Macro AUC"
+
+dataset:
+  dataset_type: cxr
+
+  train: [NIH]
+  eval: [NIH]
+  test: [NIH]
+
+  NIH:
+    train: chestxray14/train.json
+    eval: chestxray14/val.json
+    test: chestxray14/test.json
+    image_root: chestxray14/images
+
+model:
+  model_config:
+    classifier_config:
+      num_classes: 14

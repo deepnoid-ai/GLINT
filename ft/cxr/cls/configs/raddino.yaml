@@ -1,0 +1,8 @@
+model:
+  model_config:
+    vision_config:
+      model_type: dinov2
+      pretrained_name_or_path: microsoft/rad-dino
+    pooling_config:
+      model_type: attentive_pooling
+      start_token_index: 1

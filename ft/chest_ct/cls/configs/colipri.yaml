@@ -1,0 +1,31 @@
+# Same frozen-probe optimization as glint_ct; batch size / epochs per dataset come from glint_ct_ft_cls_all.
+train:
+  per_device_train_batch_size: 32
+  per_device_eval_batch_size: 32
+  ddp_find_unused_parameters: False
+  save_steps: 1
+  warmup_steps: 200
+
+model:
+  model_config:
+    pretrained_dir: ${oc.env:PRETRAINED_DIR,./pretrained}
+    vision_config:
+      model_type: colipri
+      pretrained_name_or_path: colipri  # directory with the HF microsoft/colipri model.safetensors
+      embed_dim: 864
+      img_size: [160, 160, 160]
+      hidden_size: 864
+
+# COLIPRI pretraining preprocessing (RAS, 2 mm isotropic, 160^3); grayscale (B, 1, D, H, W) input
+dataset:
+  use_monai: True
+  monai_config:
+    orientation: "RAS"
+    target_spacing: [2.0, 2.0, 2.0]
+    roi_size: [160, 160, 160]
+    final_size: [160, 160, 160]
+    hu_range: [-1000.0, 1000.0]
+    normalize_range: [-1.0, 1.0]
+    crop_foreground: false
+    cache_root: "monai_cache/ct_res160_RAS"  # relative to dataset.data_root
+  rgb_norm: False

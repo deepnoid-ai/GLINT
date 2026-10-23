@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>GLINT: Sparsely Gated Vision-Language Alignment for Fine-Grained Radiology Representations</title>
+<meta name="description" content="GLINT (NeurIPS 2026): sparsely gated vision-language alignment for chest X-ray and chest CT, with zero-shot classification, grounding and segmentation from free text.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="GLINT: Sparsely Gated Vision-Language Alignment for Fine-Grained Radiology Representations">
+<meta property="og:description" content="GLINT (NeurIPS 2026): sparsely gated vision-language alignment for chest X-ray and chest CT.">
+<meta property="og:url" content="https://deepnoid-ai.github.io/GLINT/">
+<meta property="og:image" content="https://deepnoid-ai.github.io/GLINT/static/images/introduction.png">
+<link rel="canonical" href="https://deepnoid-ai.github.io/GLINT/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Code:wght@400&family=Noto+Sans:ital,wght@0,400;0,600;1,400&family=STIX+Two+Text:ital@0;1&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#FFFFFF; --band:#F5F6FA; --ink:#000057; --text:#333B5E; --muted:#5A6386;
+  --line:#E5E7F0; --line-strong:#D2D7E6;
+  --btn:#000057; --btn-hover:#003293; --btn-text:#FFFFFF;
+  --accent:#0066FF; --accent-text:#003293; --accent-tint:#EAF1FF; --accent-border:#BDD4FF;
+  --mint:#34D0B3; --mint-text:#0E8A74; --mint-tint:#E4F9F4; --mint-border:#ABEBDC;
+  --font-display:"Google Sans","Product Sans","Noto Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-body:"Noto Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-math:"STIX Two Text","Cambria Math",Cambria,"Times New Roman",serif;
+  --font-mono:"Google Sans Code",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --font-emoji:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+  --radius:12px; --radius-sm:8px; --gutter:clamp(16px,4vw,28px);
+}
+*,*::before,*::after{box-sizing:border-box;}
+body{margin:0; background:var(--bg); color:var(--text); font:400 1.0625rem/1.7 var(--font-body);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;}
+.wrap{max-width:960px; margin-inline:auto;
+  padding-left:max(var(--gutter),env(safe-area-inset-left,0px)); padding-right:max(var(--gutter),env(safe-area-inset-right,0px));}
+a{color:var(--accent-text);}
+a:hover{color:var(--accent);}
+p{margin:0 0 1rem;} p:last-child{margin-bottom:0;}
+.math{font-family:var(--font-math); font-size:1.08em; font-style:italic; white-space:nowrap;}
+
+/* hero */
+.hero{padding-block:clamp(3.25rem,8vw,5.25rem) clamp(1.75rem,3vw,2.5rem); text-align:center;}
+.title{margin:0 auto; max-width:21em; text-wrap:balance;
+  font:400 clamp(1.9rem,1.05rem + 3.3vw,3.05rem)/1.2 var(--font-display); letter-spacing:-.015em; color:var(--ink);}
+.title .logo{margin-right:.2em; font-family:var(--font-emoji); font-weight:400; letter-spacing:0;}
+.title .name{font-weight:700; color:var(--accent);}
+.authors{display:flex; flex-wrap:wrap; justify-content:center; gap:.15rem 1.5rem; margin:1.6rem auto 0; padding:0;
+  list-style:none; font:400 clamp(1.02rem,.95rem + .4vw,1.2rem)/1.5 var(--font-display); color:var(--ink);}
+.authors sup{color:var(--muted); font-size:.68em;}
+.affil{margin:.8rem 0 0; font-size:.95rem; color:var(--muted);}
+.affil-note{margin:.3rem 0 0; font-size:.82rem; color:var(--muted);}
+.venue{display:inline-flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:.45em;
+  margin:1rem 0 0; font:700 1.364rem/1.4 var(--font-display); color:var(--ink); letter-spacing:.01em;}
+.venue-logo{flex:none; width:auto; height:2.2em;}
+.links{display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:1.6rem 0 0; padding:0; list-style:none;}
+.btn{display:inline-flex; align-items:center; gap:.55em; height:2.65rem; padding:0 1.2rem 0 1rem; border-radius:999px;
+  background:var(--btn); color:var(--btn-text); text-decoration:none; font:500 1rem/1 var(--font-display); letter-spacing:.01em;
+  transition:background .15s ease, transform .15s ease, box-shadow .15s ease;}
+.btn svg{width:1.15em; height:1.15em; flex:none;}
+.btn .hf{font-family:var(--font-emoji); font-style:normal; font-size:1.1em; line-height:1;}
+.btn:hover{background:var(--btn-hover); color:#fff; transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,0,87,.18);}
+.btn:active{transform:none; box-shadow:none;}
+@media (prefers-reduced-motion: reduce){.btn{transition:none;} .btn:hover{transform:none;}}
+
+/* teaser */
+.teaser{padding-block:0 clamp(2.75rem,6vw,4rem);}
+.teaser-fig{margin:0;}
+.teaser-fig img{display:block; width:100%; max-width:100%; border:1px solid var(--line); border-radius:var(--radius); background:#fff;}
+.hook{margin:clamp(1.5rem,3vw,2.1rem) 0 0; text-align:center; text-wrap:balance;
+  font:400 clamp(1.12rem,1rem + .7vw,1.4rem)/1.5 var(--font-display); color:var(--ink);}
+.hook strong{font-weight:700;}
+.toc{margin:clamp(1.1rem,2.4vw,1.5rem) 0 0;}
+.toc ul{display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:0; padding:0; list-style:none;}
+.pill{display:inline-block; padding:.42em 1em; border-radius:999px; border:1px solid var(--line-strong);
+  background:#fff; color:var(--text); text-decoration:none; font:500 .92rem/1.2 var(--font-display);}
+.pill:hover{border-color:var(--accent); color:var(--accent-text);}
+
+/* sections */
+main > section[id]{scroll-margin-top:.75rem;}
+.sec{padding-block:clamp(3rem,7vw,4.5rem);}
+.sec.alt{background:var(--band);}
+.sec-title{margin:0 0 1.4rem; text-align:center; text-wrap:balance;
+  font:500 clamp(1.55rem,1.1rem + 1.5vw,2.05rem)/1.25 var(--font-display); letter-spacing:-.01em; color:var(--ink);}
+.lead{font-size:1.1rem; line-height:1.75;}
+.note{color:var(--muted); font-size:.9rem; line-height:1.6;}
+.center{text-align:center;}
+figure.fig-img{margin:clamp(1.4rem,3vw,2rem) 0 0;}
+figure.fig-img img{display:block; width:100%; max-width:100%; border:1px solid var(--line); border-radius:var(--radius); background:#fff;}
+figure.fig-img figcaption{margin-top:.7rem; font-size:.9rem; color:var(--muted); line-height:1.55;}
+
+/* method cards */
+.points{display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:16px; margin-top:1.6rem;}
+.point{border:1px solid var(--line); border-radius:var(--radius); background:#fff; padding:1.2rem 1.35rem; min-width:0;}
+.sec.alt .point{border-color:var(--line-strong);}
+.point h3{margin:0 0 .4rem; font:700 1.05rem/1.4 var(--font-display); color:var(--ink);}
+.point h3 em{color:var(--accent); font-style:normal;}
+.point p{font-size:.95rem; color:var(--text); margin:0;}
+
+/* tables */
+.tbl-scroll{overflow-x:auto; margin-top:1.4rem; border:1px solid var(--line-strong); border-radius:var(--radius-sm); background:#fff;}
+table.data{width:100%; border-collapse:collapse; font-size:.85rem; font-variant-numeric:tabular-nums;}
+table.data caption{caption-side:top; text-align:left; padding:.65rem .9rem; background:var(--band);
+  border-bottom:1px solid var(--line-strong); border-radius:calc(var(--radius-sm) - 1px) calc(var(--radius-sm) - 1px) 0 0;}
+table.data .cap-title{display:block; font:600 .95rem/1.4 var(--font-display); color:var(--ink);}
+table.data .cap-sub{display:block; font:400 .78rem/1.4 var(--font-body); color:var(--muted); margin-top:.05rem;}
+table.data th,table.data td{padding:.45rem .5rem; border-bottom:1px solid var(--line); text-align:center; white-space:nowrap;}
+table.data td:first-child{text-align:left; padding-left:.9rem;}
+table.data td:first-child,table.data thead th[rowspan]:first-child{border-right:1px solid var(--line-strong);}
+table.data thead th{font:500 .8rem/1.35 var(--font-display); color:var(--ink); white-space:normal; vertical-align:middle;}
+table.data thead tr:last-child th{border-bottom:1px solid var(--line-strong);}
+table.data th.gs,table.data td.gs{border-left:1px solid var(--line-strong);}
+table.data tbody tr:last-child td{border-bottom:none;}
+table.data tr.is-ours td{font-weight:700; color:var(--ink); background:var(--mint-tint);}
+.cite{font-size:.72em; vertical-align:super; line-height:0;}
+.cite a{color:var(--accent-text); text-decoration:none;}
+.cite a:hover{color:var(--accent);}
+.refs-sec{padding-block:1.1rem 1.6rem; border-top:1px solid var(--line);}
+details.refs-view{margin:0 auto; max-width:740px;}
+details.refs-view summary{cursor:pointer; text-align:center; list-style:none; font:500 .92rem/1.5 var(--font-display); color:var(--muted);}
+details.refs-view summary:hover{color:var(--ink);}
+details.refs-view summary::-webkit-details-marker{display:none;}
+details.refs-view summary::after{content:" \25B8"; color:var(--accent-text);}
+details.refs-view[open] summary::after{content:" \25BE";}
+.refs{margin:.4rem 0 0; padding-left:2.3em; font:400 .75rem/1.5 var(--font-body); color:var(--muted); text-align:left;}
+.refs li{scroll-margin-top:30vh; border-radius:4px; padding:.1em .4em .1em .1em;}
+.refs li + li{margin-top:.1rem;}
+.refs li:target{color:var(--ink); background:var(--accent-tint);}
+.refs li::marker{color:var(--muted); font-variant-numeric:tabular-nums;}
+.tables-2col{display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start; margin-top:1.4rem;}
+.tables-2col .tbl-scroll{margin-top:0;}
+@media (max-width:760px){.tables-2col{grid-template-columns:1fr;}}
+.results-note{margin-top:1rem;}
+
+/* model cards */
+.models{display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:16px; margin-top:1.6rem;}
+.model-card{border:1px solid var(--line-strong); border-radius:var(--radius); background:#fff;
+  padding:1.25rem 1.4rem; min-width:0; display:flex; flex-direction:column; gap:.5rem;}
+.model-card .kind{margin:0; font:500 .78rem/1 var(--font-display); letter-spacing:.08em; text-transform:uppercase; color:var(--muted);}
+.model-card h3{margin:0; font:700 1.05rem/1.4 var(--font-display);}
+.model-card h3 a{color:var(--accent-text); text-decoration:none;}
+.model-card h3 a:hover{color:var(--accent); text-decoration:underline;}
+.model-card p{font-size:.92rem; color:var(--text); margin:0;}
+
+/* bibtex */
+.bibtex-head{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:1.2rem;}
+pre.bibtex{margin:.7rem 0 0; padding:1rem 1.2rem; overflow-x:auto; border:1px solid var(--line-strong); border-radius:var(--radius-sm);
+  background:#fff; font:400 .85rem/1.6 var(--font-mono); color:var(--text);}
+.copy{font:500 .85rem/1 var(--font-display); border:1px solid var(--line-strong); background:#fff; color:var(--text);
+  border-radius:999px; padding:.55em 1.1em; cursor:pointer;}
+.copy:hover{color:var(--accent-text); border-color:var(--accent);}
+.copy:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+footer{border-top:1px solid var(--line); padding-block:2rem 2.6rem;}
+footer .wrap{display:flex; flex-direction:column; gap:.8rem;}
+footer p{margin:0; font-size:.85rem; color:var(--muted); line-height:1.6;}
+.back-top{text-align:center; margin-top:.8rem;}
+.back-top a{display:inline-flex; align-items:center; gap:.4em; color:var(--accent-text); text-decoration:none; font:500 .9rem var(--font-display);}
+.back-top a:hover{color:var(--accent);}
+@media (prefers-reduced-motion: no-preference){html{scroll-behavior:smooth;}}
+</style>
+</head>
+<body>
+<header class="hero" id="top">
+  <div class="wrap">
+    <h1 class="title"><span class="logo" aria-hidden="true">✨</span><span class="name">GLINT</span>: Sparsely Gated Vision-Language Alignment for Fine-Grained Radiology Representations</h1>
+    <ul class="authors" aria-label="Authors">
+      <li>Jonggwon Park<sup>1*†</sup></li>
+      <li>Seongeun Lee<sup>1*</sup></li>
+      <li>Junhyun Park<sup>1‡</sup></li>
+      <li>Hannah Yun<sup>1‡</sup></li>
+      <li>Hyunwoong Kim<sup>1</sup></li>
+      <li>Sohyun Jeong<sup>1</sup></li>
+      <li>Hyewon Kang<sup>1</sup></li>
+      <li>Byungmu Yoon<sup>1</sup></li>
+      <li>Kyoyun Choi<sup>2</sup></li>
+    </ul>
+    <p class="affil"><sup>1</sup>DEEPNOID Inc., Seoul, South Korea &nbsp;·&nbsp; <sup>2</sup>Sejong University, Seoul, South Korea</p>
+    <p class="affil-note"><sup>*</sup>Equal contribution &nbsp; <sup>‡</sup>Equal second-author contribution &nbsp; <sup>†</sup>Corresponding author</p>
+    <p><span class="venue"><img class="venue-logo" src="static/images/neurips_logo.svg" width="36" height="36" alt="NeurIPS">NeurIPS 2026</span></p>
+    <ul class="links">
+      <li>
+        <a class="btn" href="https://arxiv.org/abs/2606.03180">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+          <span>Paper</span>
+        </a>
+      </li>
+      <li>
+        <a class="btn" href="https://github.com/deepnoid-ai/GLINT">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          <span>Code</span>
+        </a>
+      </li>
+      <li><a class="btn" href="https://huggingface.co/Deepnoid/GLINT-CXR"><span class="hf" aria-hidden="true">🤗</span><span>GLINT-CXR</span></a></li>
+      <li><a class="btn" href="https://huggingface.co/Deepnoid/GLINT-CT"><span class="hf" aria-hidden="true">🤗</span><span>GLINT-CT</span></a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="teaser" aria-label="Free-text localization examples">
+    <div class="wrap">
+      <figure class="teaser-fig">
+        <img src="static/images/visualization.png" alt="Free-text queries highlighting findings on chest X-rays and CT volumes with sparse gate maps">
+      </figure>
+      <p class="hook">A radiology report supervises the whole image, yet each finding occupies only a small region.
+      <strong>GLINT</strong> pairs a sparse gate that aligns each sentence with the patches it describes with
+      pretrained SSL encoders kept fine-grained — enabling zero-shot classification, grounding, and segmentation on
+      chest X-ray and 3D CT, and a powerful standalone vision encoder.</p>
+      <nav class="toc" aria-label="On this page">
+        <ul>
+          <li><a class="pill" href="#motivation">Motivation</a></li>
+          <li><a class="pill" href="#method">Method</a></li>
+          <li><a class="pill" href="#results">Results</a></li>
+          <li><a class="pill" href="#models">Models &amp; Code</a></li>
+          <li><a class="pill" href="#bibtex-section">BibTeX</a></li>
+        </ul>
+      </nav>
+    </div>
+  </section>
+
+  <section class="sec alt" id="tldr" aria-labelledby="tldr-title">
+    <div class="wrap">
+      <h2 class="sec-title" id="tldr-title">TL;DR</h2>
+      <p class="lead">Radiology reports supervise the whole image, yet each finding occupies only a small region. GLINT
+      models this sparse correspondence explicitly: <strong>Sparsely Gated Alignment</strong> lets a sigmoid gate in a
+      separate gate embedding space select the patches relevant to each sentence, and <strong>Dense Feature
+      Regularization</strong> anchors the encoder's intermediate features to a frozen SSL teacher so those patch
+      features stay fine-grained. Built with DINOv3 (CXR) and V-JEPA 2.1 (CT), GLINT delivers zero-shot classification,
+      grounding and segmentation from free text, with the largest gains exactly where sparse, query-specific
+      localization is required. The GLINT vision encoder is also a strong standalone backbone: fine-tuned downstream,
+      it outperforms both SSL encoders and medical VLMs on classification, report generation and segmentation.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="motivation" aria-labelledby="motivation-title">
+    <div class="wrap">
+      <h2 class="sec-title" id="motivation-title">Motivation</h2>
+      <div>
+        <p>Image-report pairs are the natural supervision for radiology vision-language models, but the pairing hides a
+        mismatch in scale: a sentence like <em>"nodule in the left lower lung"</em> describes a few patches, while the
+        loss is applied at the global image-report level. Prior approaches spread alignment weight densely across all
+        patches, which blurs localization and caps zero-shot grounding and segmentation.</p>
+      </div>
+      <figure class="fig-img">
+        <img src="static/images/introduction.png" loading="lazy" decoding="async"
+             alt="GLINT overview: sparse image-report correspondence, sigmoid-gated alignment versus a noisy dense baseline, and the GLINT-CXR / GLINT-CT family">
+        <figcaption>Each sentence describes a small region of the image. GLINT's sigmoid gate produces sparse,
+        query-specific patch scores where dense baselines stay noisy, and the same framework yields GLINT-CXR and
+        GLINT-CT.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="sec alt" id="method" aria-labelledby="method-title">
+    <div class="wrap">
+      <h2 class="sec-title" id="method-title">Method at a glance</h2>
+      <div class="points">
+        <div class="point">
+          <h3><em>SGA</em> — Sparsely Gated Alignment</h3>
+          <p>Patch and text features are projected into a separate gate embedding space where a sigmoid gate activates
+          only the patches relevant to each query. A sparsemax-pooled <b>gate confidence shift</b>
+          <span class="math">ℓ = ρ + ω·e</span> restores the absolute activation signal, so absent and present findings
+          stay separable without breaking sparsity.</p>
+        </div>
+        <div class="point">
+          <h3><em>DFR</em> — Dense Feature Regularization</h3>
+          <p>Token-wise cosine distillation anchors intermediate student features (layer 22) to a frozen SSL teacher —
+          DINOv3<sup class="cite"><a href="#ref-1">1</a></sup> ViT-7B (layer 36) for CXR, V-JEPA 2.1<sup class="cite"><a href="#ref-2">2</a></sup> ViT-G (layer 44) for CT — preserving the fine-grained patch
+          features the gate relies on.</p>
+        </div>
+      </div>
+      <figure class="fig-img">
+        <img src="static/images/method.png" loading="lazy" decoding="async"
+             alt="GLINT architecture: sparsely gated alignment head over patch tokens plus dense feature regularization from a frozen teacher">
+        <figcaption>The full training loss is <span class="math">ℒ = ℒ<sub>align</sub> + λ·ℒ<sub>reg</sub></span>
+        (λ = 8), trained end-to-end on image-report pairs only — no masks, boxes, or region labels.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="sec" id="results" aria-labelledby="results-title">
+    <div class="wrap">
+      <h2 class="sec-title" id="results-title">Zero-shot results</h2>
+      <div class="tbl-scroll">
+        <table class="data">
+          <caption><span class="cap-title">Chest X-ray zero-shot</span>
+          <span class="cap-sub">Classification: Macro AUROC &nbsp;·&nbsp; Grounding: Macro Acc. / Acc. &nbsp;·&nbsp; Segmentation: Macro Dice / Dice &nbsp;·&nbsp; best in bold</span></caption>
+          <thead>
+            <tr><th rowspan="2">Method</th><th colspan="6">Classification</th><th colspan="2" class="gs">Grounding</th><th colspan="2" class="gs">Segmentation</th></tr>
+            <tr><th>PadChest</th><th>PadChest20</th><th>ChestXray14</th><th>ChestX-Det10</th><th>CheXpert</th><th>Open-I</th><th class="gs">ChestX-Det10</th><th>MS-CXR</th><th class="gs">ChestX-Det</th><th>SIIM</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>GLoRIA<sup class="cite"><a href="#ref-3">3</a></sup></td><td>0.565</td><td>0.558</td><td>0.610</td><td>0.645</td><td>0.750</td><td>0.589</td><td class="gs">0.367</td><td>-</td><td class="gs">-</td><td>-</td></tr>
+            <tr><td>KAD<sup class="cite"><a href="#ref-4">4</a></sup></td><td>0.750</td><td>0.735</td><td>0.789</td><td>0.735</td><td>0.905</td><td>0.807</td><td class="gs">0.391</td><td>-</td><td class="gs">-</td><td>-</td></tr>
+            <tr><td>MedKLIP<sup class="cite"><a href="#ref-5">5</a></sup></td><td>0.629</td><td>0.688</td><td>0.726</td><td>0.713</td><td>0.879</td><td>0.759</td><td class="gs">0.481</td><td>0.407</td><td class="gs">0.249</td><td>0.044</td></tr>
+            <tr><td>CARZero<sup class="cite"><a href="#ref-6">6</a></sup></td><td>0.810</td><td>0.837</td><td>0.811</td><td>0.796</td><td><b>0.923</b></td><td>0.838</td><td class="gs">0.543</td><td>0.749</td><td class="gs">0.304</td><td>0.081</td></tr>
+            <tr><td>MedSigLIP<sup class="cite"><a href="#ref-7">7</a></sup></td><td>0.736</td><td>0.747</td><td>0.742</td><td>0.702</td><td>0.859</td><td>0.763</td><td class="gs">-</td><td>-</td><td class="gs">-</td><td>-</td></tr>
+            <tr><td>RadZero<sup class="cite"><a href="#ref-8">8</a></sup></td><td>0.841</td><td>0.871</td><td>0.804</td><td>0.787</td><td>0.900</td><td>0.847</td><td class="gs">0.622</td><td>0.844</td><td class="gs">0.332</td><td>0.171</td></tr>
+            <tr class="is-ours"><td>GLINT-CXR</td><td><b>0.863</b></td><td><b>0.917</b></td><td><b>0.825</b></td><td><b>0.853</b></td><td>0.921</td><td><b>0.881</b></td><td class="gs"><b>0.729</b></td><td><b>0.892</b></td><td class="gs"><b>0.434</b></td><td><b>0.317</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tables-2col">
+        <div class="tbl-scroll">
+          <table class="data">
+            <caption><span class="cap-title">Chest CT zero-shot classification</span>
+            <span class="cap-sub">Macro AUROC &nbsp;·&nbsp; best in bold</span></caption>
+            <thead>
+              <tr><th>Method</th><th>CT-RATE</th><th>RAD-ChestCT</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>CT-CLIP<sup class="cite"><a href="#ref-9">9</a></sup></td><td>0.731</td><td>0.629</td></tr>
+              <tr><td>Merlin<sup class="cite"><a href="#ref-10">10</a></sup><sup>†</sup></td><td>0.728</td><td>0.644</td></tr>
+              <tr><td>fVLM<sup class="cite"><a href="#ref-11">11</a></sup><sup>†</sup></td><td>0.778</td><td>0.680</td></tr>
+              <tr><td>ViSD-Boost<sup class="cite"><a href="#ref-12">12</a></sup><sup>†</sup></td><td>0.790</td><td>0.694</td></tr>
+              <tr><td>RadZero3D<sup class="cite"><a href="#ref-13">13</a></sup></td><td>0.762</td><td>0.690</td></tr>
+              <tr><td>COLIPRI<sup class="cite"><a href="#ref-14">14</a></sup></td><td>0.785</td><td>0.730</td></tr>
+              <tr class="is-ours"><td>GLINT-CT</td><td><b>0.850</b></td><td><b>0.789</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbl-scroll">
+          <table class="data">
+            <caption><span class="cap-title">Free-text segmentation on ReXGroundingCT</span>
+            <span class="cap-sub">Dice &nbsp;·&nbsp; supervised methods shown for reference</span></caption>
+            <thead>
+              <tr><th>Method</th><th>Setting</th><th>Dice</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>SAT<sup class="cite"><a href="#ref-15">15</a></sup><sup>‡</sup></td><td>Supervised</td><td>0.131</td></tr>
+              <tr><td>VoxTell<sup class="cite"><a href="#ref-16">16</a></sup><sup>‡</sup></td><td>Supervised</td><td>0.282</td></tr>
+              <tr class="is-ours"><td>GLINT-CT</td><td>Zero-shot</td><td>0.128</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="note results-note">Chest X-ray baseline rows are quoted from RadZero (MedSigLIP evaluated by us with its
+      released weights). CT-CLIP and RadZero3D rows are quoted from the RadZero3D paper and COLIPRI (CRM, short prompts)
+      from the COLIPRI paper; <sup>†</sup> reported by ViSD-Boost under a protocol excluding two labels; under that
+      protocol GLINT-CT reaches 0.855 / 0.794. <sup>‡</sup> reported by VoxTell. GLINT also leads downstream
+      fine-tuning — classification, report generation and segmentation on both modalities; full tables in the paper.</p>
+    </div>
+  </section>
+
+  <section class="sec alt" id="models" aria-labelledby="models-title">
+    <div class="wrap">
+      <h2 class="sec-title" id="models-title">Models &amp; Code</h2>
+      <div class="models">
+        <div class="model-card">
+          <p class="kind">Model · Chest X-ray</p>
+          <h3><a href="https://huggingface.co/Deepnoid/GLINT-CXR">Deepnoid/GLINT-CXR</a></h3>
+          <p>DINOv3 ViT-L/16 + MPNet, pretrained on MIMIC-CXR.</p>
+        </div>
+        <div class="model-card">
+          <p class="kind">Model · Chest CT</p>
+          <h3><a href="https://huggingface.co/Deepnoid/GLINT-CT">Deepnoid/GLINT-CT</a></h3>
+          <p>V-JEPA 2.1 ViT-L/16 + MPNet, pretrained on CT-RATE.</p>
+        </div>
+        <div class="model-card">
+          <p class="kind">Code</p>
+          <h3><a href="https://github.com/deepnoid-ai/GLINT">deepnoid-ai/GLINT</a></h3>
+          <p>Pretraining, zero-shot evaluation, downstream fine-tuning.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="refs-sec" id="references" aria-label="References">
+    <div class="wrap">
+      <details class="refs-view" id="refs-details">
+        <summary>References (16)</summary>
+        <ol class="refs">
+          <li id="ref-1">Siméoni et al. DINOv3. arXiv, 2025.</li>
+          <li id="ref-2">Mur-Labadia et al. V-JEPA 2.1: Unlocking Dense Features in Video Self-Supervised Learning. arXiv, 2026.</li>
+          <li id="ref-3">Huang et al. GLoRIA: A Multimodal Global-Local Representation Learning Framework for Label-Efficient Medical Image Recognition. ICCV, 2021.</li>
+          <li id="ref-4">Zhang et al. Knowledge-enhanced visual-language pre-training on chest radiology images. Nature Communications, 2023.</li>
+          <li id="ref-5">Wu et al. MedKLIP: Medical knowledge enhanced language-image pre-training for X-ray diagnosis. ICCV, 2023.</li>
+          <li id="ref-6">Lai et al. CARZero: Cross-attention alignment for radiology zero-shot classification. CVPR, 2024.</li>
+          <li id="ref-7">Sellergren et al. MedGemma technical report. arXiv, 2025.</li>
+          <li id="ref-8">Park et al. RadZero: Similarity-Based Cross-Attention for Explainable Vision-Language Alignment in Chest X-ray with Zero-Shot Multi-Task Capability. NeurIPS, 2025.</li>
+          <li id="ref-9">Hamamci et al. Generalist foundation models from a multimodal dataset for 3D computed tomography. Nature Biomedical Engineering, 2026.</li>
+          <li id="ref-10">Blankemeier et al. Merlin: a computed tomography vision-language foundation model and dataset. Nature, 2026.</li>
+          <li id="ref-11">Shui et al. Large-scale and fine-grained vision-language pre-training for enhanced CT image understanding. ICLR, 2025.</li>
+          <li id="ref-12">Cao et al. Boosting vision semantic density with anatomy normality modeling for medical vision-language pre-training. ICCV, 2025.</li>
+          <li id="ref-13">Park et al. RadZero3D: Bridging Self-Supervised Video Models and Medical Vision-Language Alignment for Zero-Shot Chest CT Interpretation. ICCV, 2025.</li>
+          <li id="ref-14">Wald et al. Comprehensive language-image pre-training for 3D medical image understanding. arXiv, 2025.</li>
+          <li id="ref-15">Zhao et al. Large-vocabulary segmentation for medical images with text prompts. npj Digital Medicine, 2025.</li>
+          <li id="ref-16">Rokuss et al. VoxTell: Free-Text Promptable Universal 3D Medical Image Segmentation. arXiv, 2025.</li>
+        </ol>
+      </details>
+    </div>
+  </section>
+
+  <section class="sec alt" id="bibtex-section" aria-labelledby="bibtex-title">
+    <div class="wrap">
+      <h2 class="sec-title" id="bibtex-title">BibTeX</h2>
+      <div class="bibtex-head">
+        <p class="note">If you use GLINT, please cite:</p>
+        <button class="copy" id="copy-bib" type="button">Copy BibTeX</button>
+      </div>
+      <pre class="bibtex" id="bibtex">@inproceedings{park2026glint,
+  title     = {{GLINT}: Sparsely Gated Vision-Language Alignment for Fine-Grained Radiology Representations},
+  author    = {Park, Jonggwon and Lee, Seongeun and Park, Junhyun and
+               Yun, Hannah and Kim, Hyunwoong and Jeong, Sohyun and
+               Kang, Hyewon and Yoon, Byungmu and Choi, Kyoyun},
+  booktitle = {The Fortieth Annual Conference on Neural Information Processing Systems},
+  year      = {2026},
+  url       = {https://arxiv.org/abs/2606.03180}
+}</pre>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>This work was supported by the Technology Innovation Program (RS-2025-02221011, Development of Medical-Specialized
+    Multimodal Hyperscale Generative AI Technology for Global Integration) funded by the Ministry of Trade, Industry &amp;
+    Energy (MOTIE, South Korea), and by the Advanced GPU Utilization Support Program funded by the Korean government
+    (Ministry of Science and ICT) (Project No. 02-26-91-0330).</p>
+    <p>Code and GLINT-CT weights: CC BY-NC 4.0 (adapted third-party files keep their own licenses; see the
+    <a href="https://github.com/deepnoid-ai/GLINT#license">README</a>). GLINT-CXR weights are a derivative of Meta's DINOv3 weights, distributed
+    under the DINOv3 License — <b>Built with DINOv3</b>. GLINT is released for research purposes only and is not intended for clinical use, including the diagnosis or treatment of any medical condition.</p>
+    <p class="back-top"><a href="#top">↑ Back to top</a></p>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll(".cite a").forEach(function (a) {
+  a.addEventListener("click", function () {
+    var d = document.getElementById("refs-details");
+    if (d) d.open = true;
+  });
+});
+document.getElementById("copy-bib").addEventListener("click", function () {
+  var text = document.getElementById("bibtex").textContent;
+  var btn = this;
+  function done(ok) { btn.textContent = ok ? "Copied" : "Select & copy"; setTimeout(function(){ btn.textContent = "Copy BibTeX"; }, 1600); }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function(){ done(true); }, function () {
+      var r = document.createRange(); r.selectNodeContents(document.getElementById("bibtex"));
+      var s = getSelection(); s.removeAllRanges(); s.addRange(r); done(false);
+    });
+  } else {
+    var r = document.createRange(); r.selectNodeContents(document.getElementById("bibtex"));
+    var s = getSelection(); s.removeAllRanges(); s.addRange(r); done(false);
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+model:
+  model_class_name: SegmentationFineTuningModel
+  config_class_name: FineTuningConfig
+
+  model_config:
+    decoder_config:
+      in_channels: 768
+      model_type: simple_upernet
+      ppm_pool_sizes: [1, 2, 3, 6]
+      ppm_out_channels: 512
+      fpn_out_channels: 512
+    pooling_config:
+      model_type: average_pooling
+      target_patch_size: 16   # 16 x 2^4 decoder upsampling = target_mask_size 256
+    projection_config:
+      model_type: linear
+      vision_hidden_dim: 768
+      projection_hidden_dim: 768    # must equal decoder_config.in_channels
+
+    # loss setting follows https://github.com/LeapLabTHU/CheXWorld/blob/090102758801dc097f53c49d135b835570c8d173/train_finetune_seg.py#L193
+    loss:
+      apply: [BCEwithLogitsLoss, DiceLoss]
+      ratio: [1.0, 1.0]
+
+      BCEwithLogitsLoss:
+        reduction: mean
+
+      DiceLoss:
+        include_background: true
+        sigmoid: true
+
+
+  module_to_update: [segmentation_decoder, projection_layer]
+
+  pretrained_ckpt: null
+  adapter_ckpt: null
+
+  dtype: torch.float32

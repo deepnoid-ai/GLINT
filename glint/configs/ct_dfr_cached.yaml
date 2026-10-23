@@ -1,0 +1,8 @@
+dataset:
+  dfr_cache_dir: ${oc.env:DFR_CACHE_DIR,./dfr_cache}/ct_vjepa21G
+  dfr_cache_layers: [44]
+
+model:
+  model_config:
+    dfr_config:
+      use_cache: True

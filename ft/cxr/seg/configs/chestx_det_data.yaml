@@ -1,0 +1,21 @@
+train:
+  metric_for_best_model: "eval_loss"
+
+dataset:
+  dataset_type: cxr
+  target_mask_size: 256
+
+  train: [ChestX_Det]
+  eval: [ChestX_Det]
+  test: [ChestX_Det]
+
+  ChestX_Det:
+    train: chestx_det/train.json
+    eval: chestx_det/valid.json
+    test: chestx_det/test.json
+    image_root: chestx_det/images
+
+model:
+  model_config:
+    decoder_config:
+      out_channels: 13

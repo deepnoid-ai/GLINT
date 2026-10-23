@@ -1,0 +1,34 @@
+# Zero-shot CT evaluation. Paths are joined with DATA_ROOT.
+
+inference:
+  batch_size: 4
+  num_workers: 8
+
+dataset:
+  # preprocessed volumes are not cached (set a DATA_ROOT-relative dir to cache them, ~140 MB per volume)
+  monai_config:
+    cache_root: null
+
+  test: [CT_RATE, RAD_ChestCT]
+
+  CT_RATE:
+    test: ct_rate/test.json
+    # layout: <raw_root>/<spl>_fixed/<spl>_<acc>/<spl>_<acc>_<alphb>/<image_id>.nii.gz
+    raw_root: CT-RATE/dataset
+  RAD_ChestCT:
+    test: rad_chestct/test.json
+    # .npz carries no spacing/orientation: arrays are already in target order and 0.8 mm isotropic
+    orientd: false
+    raw_spacing: [0.8, 0.8, 0.8]
+
+  seg_dataset: [ReXGroundingCT]
+  threshold_step: 0.01
+  ReXGroundingCT:
+    val: rexgroundingct/dataset.json
+    segmentation_root: rexgroundingct/segmentations
+    # CT-RATE on-disk root, "<split>_fixed/<split>_<acc>/<split>_<acc>_<alphb>/" layout.
+    ct_rate_raw_root: CT-RATE/dataset
+    use_original_size: true
+    visualization_threshold: 0.0
+    save_visualization: true
+    visualization_orientation: IPL

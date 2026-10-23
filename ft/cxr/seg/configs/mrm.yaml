@@ -1,0 +1,9 @@
+model:
+  model_config:
+    pretrained_dir: ${oc.env:PRETRAINED_DIR,./pretrained}
+    vision_config:
+      model_type: mrm
+      pretrained_name_or_path: MRM/MRM.pth
+      patch_token_start_index: 1
+    projection_config:
+      vision_hidden_dim: 768

@@ -1,0 +1,23 @@
+dataset:
+  dataset_type: cxr
+
+  dataset_class: CXRDataset
+
+  train: [mimic_cxr]
+  eval: [mimic_cxr]
+  test: [mimic_cxr]
+
+  mimic_cxr:
+    train: mimic_cxr/train.json
+    eval: mimic_cxr/validate.json
+    test: mimic_cxr/test.json
+    image_root: mimic_cxr/images
+
+  train_split_ratio: 0.1
+  seed: 42
+
+model:
+  model_config:
+    report_generator_config:
+      vocab_size: 3137 # mimic-cxr, train 10% (seed 42)
+      max_seq_length: 512

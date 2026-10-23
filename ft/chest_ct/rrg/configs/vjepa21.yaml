@@ -1,0 +1,22 @@
+train:
+  per_device_train_batch_size: 16
+  per_device_eval_batch_size: 16
+  gradient_accumulation_steps: 1
+  label_names: ["reports"]
+
+model:
+  model_config:
+    pretrained_dir: ${oc.env:PRETRAINED_DIR,./pretrained}
+    vision_config:
+      model_type: vjepa2.1
+      pretrained_checkpoint: vjepa2_1/vjepa2_1_vitl_dist_vitG_384.pt
+      arch: "vjepa2_1_vit_large_384"
+      input_modality: 3
+      input_slices: 240
+      num_channels: 3
+      img_size: 384
+      num_frames: 80  # 240 slices / 3 channels
+      use_hierarchical: False
+
+    report_generator_config:
+      d_vf: 1024  # ViT-L hidden size

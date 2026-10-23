@@ -1,0 +1,23 @@
+train:
+  metric_for_best_model: "eval_cls_metrics/AUC"
+
+
+dataset:
+  dataset_type: cxr
+  target_mask_size: 256
+
+  train: [SIIM]
+  eval: [SIIM]
+  test: [SIIM]
+
+  SIIM:
+    train: siim_acr/train.txt
+    eval: siim_acr/val.txt
+    test: siim_acr/test.txt
+    image_root: siim_acr/png_images
+    mask_root: siim_acr/png_masks
+
+model:
+  model_config:
+    classifier_config:
+      num_classes: 1

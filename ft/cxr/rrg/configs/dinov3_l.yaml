@@ -1,0 +1,14 @@
+train:
+  per_device_train_batch_size: 16
+  per_device_eval_batch_size: 16
+  gradient_accumulation_steps: 2
+
+model:
+  model_config:
+    vision_config:
+      model_type: dinov3_vit
+      pretrained_name_or_path: facebook/dinov3-vitl16-pretrain-lvd1689m
+      img_size: 1024
+      use_cls_token: False
+    report_generator_config:
+      d_vf: 1024
